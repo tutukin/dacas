@@ -4,9 +4,11 @@ const driver = require('cassandra-driver');
 const E = require('./Error');
 var _client;
 var _keyspace = '';
+var _schema = {};
 
 var dacas = module.exports = {
-    connect: connect
+    connect: connect,
+    schema: schema
 };
 
 function connect (keyspace, options) {
@@ -14,7 +16,7 @@ function connect (keyspace, options) {
         let err = E.typeError('KeyspaceRequired', 'Provide keyspace name');
         return Promise.reject(err);
     }
-    
+
     _keyspace = keyspace;
 
     return new Promise( (resolve, reject) => {
@@ -27,4 +29,11 @@ function connect (keyspace, options) {
             return resolve(res);
         });
     });
+}
+
+function schema (modelName, modelDescription) {
+    if ( typeof modelName !== 'string' ) throw E.typeError('modelNameRequired', 'Model name required');
+    if ( modelName in _schema ) throw E.error('SchemaExists', `Schema ${modelName} is already defined`);
+
+    _schema[modelName] = modelDescription;
 }
