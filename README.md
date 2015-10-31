@@ -6,25 +6,33 @@ __NOTE: right now it is not working at all!__
 
 requires node >=4.2
 
-```javascript
-  const dacas = require('dacas');
+## Design goals
 
-  dacas.connect('keyspace', {contactPoints: ['127.0.0.1']})
+- [ ] Object to row mapper with Schema;
+- [ ] Async operations return (native) Promises;
+- [ ] Simple interface, thin code;
+- [x] Uses [cassandra-driver](https://github.com/datastax/nodejs-driver);
+- [ ] Easy debugging;
+- [ ] Schema migrations, probably with an external module;
+- [ ] Here should be some goal!
+
+```javascript
+  const db = require('dacas');
+
+  db.connect('keyspace', {contactPoints: ['127.0.0.1']})
   .then(work, die);
 
-  function work (connection) {
-    // connection may provide some useful info
-
-    dacas.schema('User', {
+  function work (db /* ??? */) {
+    db.schema('User', {
       id: {
-        type: 'uuid',
+        type: db.Types.UUID,
         primary: true
       },
       name: String,
       // etc...
     });
 
-    let user = dacas.model('User').create({name: 'John Doe'});
+    let user = db.model('User').create({name: 'John Doe'});
 
     user.save()
     .then(user => {
