@@ -8,7 +8,8 @@ var _schema = {};
 
 var dacas = module.exports = {
     connect: connect,
-    schema: schema
+    schema: schema,
+    model: model
 };
 
 function connect (keyspace, options) {
@@ -36,4 +37,9 @@ function schema (modelName, modelDescription) {
     if ( modelName in _schema ) throw E.error('SchemaExists', `Schema ${modelName} is already defined`);
 
     _schema[modelName] = modelDescription;
+}
+
+function model (modelName) {
+    if ( typeof modelName !== 'string' ) throw E.typeError('modelNameRequired', 'Model name required');
+    if ( ! (modelName in _schema) ) throw E.error('ModelUndefined', `Model ${modelName} is not defined`);
 }
